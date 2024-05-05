@@ -1,2 +1,1 @@
-# Proj-Lalonde
-Impact of job training in the Lalonde dataset
+# Impact of job training in the Lalonde dataset
