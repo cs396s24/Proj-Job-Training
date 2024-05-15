@@ -124,3 +124,10 @@ $D_i = 1 \text{ if } d_{is} > 0; \quad D_i = 0 \text{ if } d_{is} \leq 0$
 * What is the "sensitivity of our propensity score results"?
 * Can we measure the treatment effect who were unemployed longer?
 * Can we also do a sensitivity analysis of our propensity scores?
+
+## Matching Methods in Practice: Three Examples
+(Guido W. Imbens, 2015)
+
+* Trimming the experimental Lalonde data due to extreme propensity scores
+* Assessing unconfoundedness for the experimental Lalonde data -- why?
+ 
