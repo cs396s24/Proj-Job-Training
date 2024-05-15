@@ -92,3 +92,35 @@ $D_i = 1 \text{ if } d_{is} > 0; \quad D_i = 0 \text{ if } d_{is} \leq 0$
   * we should also run a t-test on the parameter ($\beta_0$) of A to check if$\beta_0 = 0$is statistically significant.
   * to get p-value, use the package. More information on its workings can be found here: https://stats.stackexchange.com/questions/485768/how-is-a-p-value-computed-for-regression-coefficients-and-why-does-it-remain-un
 * Can we use some form of matching or IPW for comparsion? Can we condition on a group and then compare results?
+
+## Causal Effects in Nonexperimental Studies: Reevaluating the Evaluation of Training Programs
+(Rajeev H. DEHEJIA and Sadek WAHBA, 1999)
+
+### Intro
+
+* uses propensity score methods to estimate the treatment impact of the National Supported Work (NSW) Demonstration, a labor training program, on postintervention earnings
+* we obtain estimates of the treatment impact that are much closer to the experimental treatment effect than Lalonde's nonexperimental estimates.
+* We know that the confounders are the preintervention variables.
+* Assumption of propensity scores: all factors that influence whether an individual is assigned to the treatment group (i.e., participates in the program) are observed and measured in the data
+* it is crucial that there are no unobserved variables influencing both the treatment assignment and the outcome. If such unobserved confounders exist, the estimates may still be biased despite using propensity scores.
+* we focus on the male participants, as estimates for this group were the most sensitive to functional-form specification, as indicated by Lalonde -- this is male participant only data!
+* assigned treatment after December 1975 and no longer participating by January 1978.
+* limited to those participants for which 1974 earnings can be obtained -- those individuals who joined the program early enough.
+* claim that this subset is no different from the LaLonde dataset even though there more individuals who were unemployed prior to program participation.
+* A higher treatment effect is obtained for those who joined the program earlier or who were unemployed prior to program participation (We might not be able to validate this because we don't have access to LaLonde's original dataset).
+
+### Sensitivity Analysis
+
+* estimates of the treatment impact are not particularly sensitive to the specification used for the propensity score
+* results show that the estimates of the training effect for Lalonde's hybrid of an experimental and nonexperimental dataset are close to the benchmark experimental estimate
+
+### Questions
+
+* Can we check the distributions of revenue differences and see if there's a multi-model revenue?
+* Selection bias?:
+  * Male
+  * participants whose 1974 and 1975 earnings can be obtained and their 1978 earnings
+  * participants who stayed throughout the study
+* What is the "sensitivity of our propensity score results"?
+* Can we measure the treatment effect who were unemployed longer?
+* Can we also do a sensitivity analysis of our propensity scores?
