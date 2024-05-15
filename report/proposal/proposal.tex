@@ -1,0 +1,122 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage[margin=2cm]{geometry}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+\usetikzlibrary{patterns, shapes.geometric, positioning, bayesnet}
+
+\usepackage{titling}
+\setlength{\droptitle}{-7em}
+\usepackage{titlesec}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
+
+
+\title{Project Proposal\\ 
+\large Impact of Job Training on Real Earnings\vspace{-1em}}
+
+\author{CS396 Causal Inference}
+
+\begin{document}
+
+\maketitle
+
+\noindent \textit{Jacob John, Shravan Srinivasan, Sai Ganesh Nellore, Michael Hartmann}
+
+\section{Problem Statement}
+
+\begin{tcolorbox}
+\begin{quote} \centering \textit{``To what extent can supervised job training improve a male participants' yearly income?"} \end{quote}
+\end{tcolorbox}
+
+
+
+\section{Causal Questions or Hypotheses}
+
+\subsection{Causal Question}
+
+We define our variables of interest as follows: let $A \in \{0, 1\}$ represent a binary treatment variable, which is $1$ when exercise is supervised and $0$ otherwise. Let $\psi$ denote a set of outcome variables from the Psychological General Well-Being Index (PGWBI) \cite{Grossi2014}. $\psi = {Y_{ax\_pre}, Y_{ax\_post}}$
+
+\subsection{Causal Estimate}
+
+We will examine $E[Y_{i}^{a_t}]$, which represents the expected rate of the outcome $Y_i$ as a function of the treatment level $A_i$, assuming all other factors are held constant. We are trying to measure the casual effect of $A$ on $Y$, where our counterfactual would be the \textit{low} exercise. Our goal here is to approximate this function by effectively mapping out how changes in daily physical activity influence the expected outcome of MADRS scores differences.
+
+\subsection{Comments}
+
+\begin{enumerate}[itemsep=0em,label={(\alph*)}]
+\item The quantification of exercise is challenging due to its subjective nature, and establishing a threshold for what constitutes sufficient exercise is uncertain. Additionally, defining the counterfactual scenario for a ``lack of exercise" is problematic. Furthermore, we could also look at sleep and sedentary data via the actigraph (provided we can define them).
+\item One way to do this via matching where we consider two individuals that are similar and we look at their exercise level. We then compare the counterfactuals among these groups.
+\item We hypothesize that our outcome variable, whether it's one measure of depression severity or potentially another, might not be influenced by physical activity. As mentioned previously, depression is a multi-faceted and complex issue and basic exercise might not reduce its onset.
+\item Furthermore, Mayo Clinic's article also highlights that regular physical activity helps alleviate depression but isn't a replacement for therapy and other forms of professional help.
+\item Alternatively, we could explore the causal impact of depression on exercise, hypothesizing that a decrease in depression severity could lead to an increase in physical activity. In this case, we could also say that depression acts as a mediator for some treatment variable like therapy. As therapy improves depression, better physical fitness follows. However, it should be noted if causality works in both directions, this would be more of a correlation analysis.
+\end{enumerate}
+
+\section{Dataset}
+
+We will use the Depresjon Dataset \cite{Garcia:2018}, which specifically targets the exploration of depression symptoms and their correlation with physical activity patterns. This dataset is valuable for understanding how motor activity patterns differ between those with depression (both unipolar and bipolar) and healthy\footnote{The dataset doesn't explicitly mention what healthy means, but we'll assume it to be those patients with no signs of depression.} controls. Due to missing data, we will ignore the healthy patients.
+
+\subsection{Overview}
+
+\begin{enumerate}[itemsep=0em,label={(\alph*)}]
+\item{}
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{enumerate}[itemsep=0em,label={(\alph*)}]
+\item{}
+\end{enumerate}
+
+\subsection{DataFrame Preview}
+
+\noindent After loading the {\tt scores.csv} into pandas, we see:
+
+\begin{verbatim}
+NUMBER        DAYS  GENDER  AGE    AFFTYPE  MELANCH  INPATIENT  EDU    
+condition_1   11    2       35-39  2        2        2          6-10   
+condition_2   18    2       40-44  1        2        2          6-10   
+condition_3   13    1       45-49  2        2        2          6-10   
+condition_4   13    2       25-29  2        2        2          11-15  
+condition_5   13    2       50-54  2        2        2          11-15  
+...
+        	MARRIAGE  WORK  MADRS1  MADRS2
+condition_1   1        2     19      19
+condition_2   2        2     24      11
+condition_3   2        2     24      25
+condition_4   1        1     20      16
+condition_5   2        2     26      26
+...
+\end{verbatim}
+
+\subsection{Variable Overview}
+
+\subsubsection{Primary}
+
+\begin{enumerate}[itemsep=0em,label={\roman*.}]
+\item{}
+\end{enumerate}
+
+\subsubsection{Confounders}
+
+\begin{enumerate}[itemsep=0em,label={\roman*.}]
+\item{}
+\end{enumerate}
+
+\section{Expectations and Concerns}
+
+\begin{enumerate}[itemsep=0em,label={(\alph*)}]
+\item{}
+\end{enumerate}
+
+\bibliographystyle{ieeetr}
+\bibliography{proposal_references}
+
+\end{document}
