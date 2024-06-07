@@ -10,311 +10,228 @@
 \usepackage{hyperref}
 \usepackage{tabularx}
 \usepackage{tikz}
-\usetikzlibrary{patterns, shapes.geometric, positioning, bayesnet}
+\usepackage{listings}
+\usetikzlibrary{patterns, shapes.geometric, positioning, bayesnet, backgrounds}
 
 \usepackage{titling}
 \setlength{\droptitle}{-7em}
 \usepackage{titlesec}
 \titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 
+\usepackage{color} % Optional: for custom colors
 
-\title{Project Update}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\author{CS396 Causal Inference}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+\title{Project Update: Job Training}
+\author{Jacob John, Sai Ganesh Nellore, Michael Hartmann, Shravan Srinivasan}
 
 \begin{document}
 
 \maketitle
 
-\section*{Instructions}
-
-This assignment is due on Friday, May 17 at 11:59pm CDT. It will accepted up to
-24 hours late with a 20\% grade penalty.
-
-Please upload a single PDF for your group to Canvas. You are encouraged to use
-the TeX file for this assignment to create and format your PDF. Your project
-update should no more than five pages total, not including references. 
-
-As always, your work must be your own. It's fine to use published packages or
-preprocessing code, but don't claim credit for work that you didn't do. If you
-use information from other sources, you must cite those.
-
-\paragraph{Rubric (10 points total)}
-
-\begin{itemize}
-\item (1 point) The update is at most five pages long, not including references
-\item (1 point) List your group members
-\item (1 point) Describe major changes to your project since your proposal
-\item (1 point) Include a causal graph and describe the variables
-\item (1 point) Describe and interpret your causal estimand
-\item (1 point) Provide and interpret a point estimate of your causal effect
-\item (1 point) Produce a synthetic data distribution that matches your assumptions
-\item (1 point) Estimate and interpret the causal effect from synthetic data
-\item (1 point) Propose at least one next step for the final report
-\item (1 point) Ask at least one question you want feedback on
-\end{itemize}
-
-\clearpage
-
-\section{Group members}
-
-\noindent Please list your group members.
-
 \section{Big changes}
 
-What's changed in what you're focusing on since you wrote your proposal?  This
-is your opportunity to let me know about any revisions to the project you've
-made since writing your proposal. If you need help deciding on possible
-revisions, please reach out to me before turning this in.
+We've changed our project entirely from the impact of exercise on depression to the effects of job training on employment and revenue. When working through depression datasets, we realized that we either didn't have enough data or confounders. The Dehejia-Wahba subset (1999) \cite{dehejia1999} of the LaLonde dataset (1986) \cite{lalonde1986} was an excellent choice for this course as it comprised an observational and an experimental dataset with all its confounders and no missing values.
 
 \section{Causal graph} \label{sec:graph}
 
-\noindent Draw a causal graph for your problem.
 
-You can use any reasonable method to produce an image of your graph as long as
-it is easy to read.  You could, for example, use the
-\href{https://aci-esp.shinyapps.io/shiny-short-example/}{ID algorithm GUI at
-this website} or the {\tt tikz} latex package, like below.  Your graph should
-use as many variables from your dataset as you can, but you aren't required to
-use them all. If you have a single treatment, a single outcome, and many
-confounders, you can just include a single confounder node and then indicate
-that it represents a vector of variables. For each node in your graph, please
-say what column(s) of your dataset it corresponds to, if it isn't obvious.
+\begin{tikzpicture}[>=stealth, node distance=2.5cm]
+    \tikzstyle{format} = [draw, thick, circle, minimum size=1.5cm, inner sep=1pt, fill=white, text=black]
+    \tikzset{every path/.style = {draw, ->, very thick}}
 
-\vspace{1em}
+    % Top row
+    \node[format] (age) {age};
+    \node[format, right of=age] (black) {black};
+    \node[format, right of=black] (hispanic) {hispanic};
 
-\begin{tikzpicture}[>=stealth, node distance=2.2cm]
-    \tikzstyle{format} = [draw, very thick, circle, minimum size=1.2cm, inner sep=1pt]
+    % Middle row
+    \node[format, below of=age] (marriage) {marriage};
+    \node[format, right of=marriage] (education) {education};
+    \node[format, right of=education] (re74) {re74};
+    \node[format, right of=re74] (re75) {re75};
 
-    \begin{scope}
-        \path[->, very thick]
+    % Bottom row
+    \node[format, below of=re74] (treat) {treat};
+    \node[format, right of=treat] (re78) {re78};
 
-            node[format] (C) {C}
-            node[format, right of=C] (D) {D}
-            node[format, below of=C] (A) {A}
-            node[format, right of=A] (M) {M}
-            node[format, right of=M] (Y) {Y}
-
-            (C) edge[blue] (A)
-            (D) edge[blue] (A)
-            (C) edge[blue] (Y)
-            (D) edge[blue] (Y)
-            (A) edge[blue] (M)
-            (M) edge[blue] (Y)
-
-        ;
+    % Edges (placed before nodes to ensure they are in the background)
+    \begin{scope}[on background layer]
+        \path[->, very thick, red] 
+            (age) edge (marriage)
+            (age) edge (education)
+            (age) edge[bend right] (re74)
+            (age) edge[bend right] (re75)
+            (age) edge[bend right=50] (re78)
+            (education) edge (marriage)
+            (education) edge (re74)
+            (education) edge (re75)
+            (education) edge[bend left=40] (re78)
+            (marriage) edge (treat)
+            (marriage) edge (re74)
+            (marriage) edge (re75)
+            (marriage) edge[bend left] (re78)
+            (hispanic) edge (marriage)
+            (hispanic) edge (education)
+            (hispanic) edge[bend left] (re74)
+            (hispanic) edge[bend left] (re75)
+            (hispanic) edge[bend left=70] (re78)
+            (black) edge (marriage)
+            (black) edge (education)
+            (black) edge[bend right] (re74)
+            (black) edge[bend right] (re75)
+            (black) edge[bend right=60] (re78)
+            (re74) edge (re78)
+            (re74) edge (treat)
+            (re75) edge (re78)
+            (re75) edge (treat)
+            (treat) edge (re78);
     \end{scope}
 \end{tikzpicture}
 
+\begin{itemize}[itemsep=-0.25em]
+    \item \textbf{treat}: 1 indicidates job training was provided, 0 indicates that the individual had to fend for themselves.
+    \item \textbf{age}: Report age of the individual at the beginning of the study.
+    \item \textbf{educ}: Total years of formal education.
+    \item \textbf{black}: Binary indicator (1 = individual is Black, 0 = otherwise).
+    \item \textbf{hispanic}: Binary indicator (1 = individual is Hispanic, 0 = otherwise).
+    \item \textbf{married}: Binary indicator (1 = individual is married, 0 = otherwise).
+    \item \textbf{re74}: Real earnings of the individual in 1974, before the treatment. This allows for a more extended view of their economic status.
+    \item \textbf{re75}: Real earnings of the individual in 1975, before the treatment.
+    \item \textbf{re78}: Real earnings of the individual in 1978, after the treatment.
+\end{itemize}
+
+Note that all earnings are adjusted for 1982 US dollars thereby circumventing the need to adjust for inflation.
+
 \section{Counterfactual function} \label{sec:counterfactual}
 
-For your treatment $A$ and outcome $Y$, write out $E[Y^a]$ as a function of the
-observed data. For example, in the frontdoor example where we had an unobserved
-$U$, we wrote:
+Assume $Y$ represents our outcome variable, i.e., {\tt re78}. Our set of confounders is $Z=$ \{{\tt education, re74, re75, black, hispanic, married}\}. $A$ is our intervention variable which represents {\tt treat} or job training. Our derivation for the counterfactual function looks below:
 
-\[
-E[Y^a] = \sum_m p(M=m \mid A=a) \sum_{a'} E[Y \mid A=a', M=m] p(A=a')
-\]
+\begin{align}
+P(Y^a) 
+       &= \sum_Z P(Y^a \mid A=a, Z) P(A=a, Z) \tag{1} \\
+       &= \sum_Z P(Y^a \mid A=a, Z) P(A=a \mid Z) P(Z) \tag{2} \\
+       &= \sum_Z P(Y \mid A=a, Z) P(A=a \mid Z) P(Z) \tag{3} \\
+       &= \sum_Z \underbrace{P(Y \mid A=a, Z)}_{Y \sim A + Z} \underbrace{P(A=a \mid Z)}_{\text{propensity}} P(Z) \tag{4}
+\end{align}
 
-You can find use \href{https://aci-esp.shinyapps.io/shiny-short-example/}{ID
-algorithm GUI at this website} to find such a function, but please use LaTeX to
-reformat it rather than taking a screenshot.
+\begin{enumerate}[itemsep=-0.25em,label={\arabic*.}]
+\item Marginalizing over $Z$.
+\item Chain rule: $P(A=a, Z) = P(A=a \mid Z) P(Z)$
+\item Consistency: $P(Y^a \mid A=a, Z) = P(Y \mid A=a, Z)$
+\item Assume: $P(Z) = \frac{1}{N}$
+\end{enumerate}
+
 
 \subsection{Assumptions}
 
-What are the assumptions required for your function above to be an unbiased
-estimator of the causal effect? For example, are you assuming consistency?
-Conditional exchangeability? What else? For the conditional exchangeability
-statements, write them in the form of $X \perp Y \mid Z$.
+In our causal graph, we can't d-separate our outcome from our treatment by conditioning on our confounders. One way to see this is by seeing that {\tt education} is a collider. When unobserved, it blocks the path from {\tt age, black}, however, it unblocks the path from the outcome to the treatment. Now, if we condition on it, it opens up a path. This is why we can't use the backdoor criteria. We can't apply frontdoor as we have no mediators.
+
+For our derivation, we assumed conditional consistency in Step 3. We can't use conditional exchangeability as we're assuming confounders such as {\tt age}, {\tt black} and {\tt hispanic} to have a dependency on {\tt re74}, the outcome and the treatment (and so forth).
 
 \section{Estimation and Interpretation} \label{sec:estimation}
 
-Choose a causal effect to estimate, such as the risk difference or risk ratio.
-Describe how you will estimate that (i.e., what models will you fit?).  Will
-you use the backdoor or frontdoor estimator, or something else? If so, say so.
-If you have a more complicated graph and will need a more complicated
-estimator, describe why neither the backdoor nor frontdoor estimator will work.
-Rather than trying to develop your own estimator for a more complicated
-setting, you can use a package like
-\href{https://github.com/y0-causal-inference/y0}{\tt $Y_0$},
-\href{https://gitlab.com/causal/ananke}{Ananke}, or
-\href{https://microsoft.github.io/dowhy/}{DoWhy}.
+Due to our complicated confounding, {\tt DoWhy} fails to find any estimators for a backdoor estimate. However, there are two ways we are going to calculate this estimate:
+
+\begin{itemize}[itemsep=-0.25em]
+\item{Based on our point estimand above, we can regress over our treatment and confounders to calculate an estimate of our Y. We then calculate propensity using our confounders.}
+\item{In the original paper, they created matched stratum based on propensity and took an average causal risk difference of each strata. This is what we're currently using for our causal estimates, we're iterating through a list of number of stratas and choosing an appropriate number based on our observable estimate.}
+\end{itemize}
+
+For propensity, one way is to regress the treatment on the confounders. An alternative approach is to use k-means or other clustering methods for matching and then comparing within stratas. Our forthcoming goal is to create stratas that are interpretable so one can say that the effect is more apparent for a certain race, pre-treatment revenue, etc. Furthermore, we also found a list of methods to try via Sizemore's Blogpost \cite{humboldt_matching}. Some of these cover Nearest-Neighbor Propensity Score Matching using propensity scores calculated through logistic regression, random forest, and XGBoost.
 
 \subsection{Point estimate}
 
-Use your estimator to get a single estimate for a causal effect your project
-focuses on. If you proposed using several outcomes and treatments in your
-proposal, you can just focus on one for now. Explain what approach you took to
-estimating the causal effect and share the numerical estimate of that effect.
+Albeit, the same, there are multiple ways to calculate our point estimate or outcome. We are planning to look at the following:
+\begin{itemize}[itemsep=-0.25em]
+\item{$E[re78^{treat=1}] - E[re78^{treat=0}]$: This is the counterfactual treatment effect for the post-treatment revenue{\tt re78}. This is the standard approach followed by Dehejia and LaLonde.}
+\item{$E[\frac{re78}{1000}^{treat=1}] - E[\frac{re78}{1000}^{treat=0}]$: Inspired by \cite{english2016causal},this is the same difference as above, except we divide revenues and represent them in the 1000s. This way models like linear regression should be able to converge faster.}
+\item{$E[(re78 - re74)^{treat=1}] - E[(re78 - re74)^{treat=0}]$: This is the counterfactual treatment effect for the difference in revenue pre and post-treatment. This tells us how much someone's revenue increase due to the treatment since participants tend to have different revenue pre-treatment and we need to account for it.}
+\item{$E[employ^{treat=1}] - E[employ^{treat=0}]$: This represents the difference between the rate of employment between the treatment groups. Rather than looking at revenue, we assume anyone with a salary is considered employed and see the proportions before and after treatment.}
+\end{itemize}
 
 \subsection{Interpretation}
 
-What does your estimate of the causal effect mean for your problem?  Tie this
-back to the reasons why you were interested in this dataset in the first place.
-If you were able to make policy decisions based on your analysis of this data,
-what would these results tell you?
+Our causal risk estimate would allow policy makers to understand the scope of job training for the disadvantaged. The original paper described this cohort as ``ex-drug addicts, ex-criminal offenders, and high school dropouts". Since we're working with a male-only subset of this data, we're limiting the applicability of our subset to the male disadvantaged population of the late 70s.
 
-For example, if your treatment were pet ownership, your outcome were
-cardiovascular health, and you chose to estimate the risk ratio, you might say
-something like ``our results indicate that if we intervened to require someone
-to own a pet, their risk of cardiovascular disease decreases by 10\%.''
+The organization behind the program estimated a cost of \$6,800-\$9,100 per participant for training. An interesting way to think about the benefit of job training would be to see whether the expected increment in annual salary would justify the investment in the program. Albeit, the salary increment for those with higher pre-treatment salaries would be diminishing.
+
+Our employment based estimate, although simple, can guide policy makers to understand the impact of job training on jail recidivism. An extension of this study could be used to help understand how job training could help employment and hence reduce jail recidivism (employment would then be a mediator). A similar study can also be found by Rodolfa et al. \cite{rodolfa2020case}
 
 \section{Synthetic data} \label{sec:synthetic}
 
-For the real-world dataset you consider, we can't check to see whether your
-assumptions are valid or your effect estimate is close to the real answer.  To
-convince yourself that the methodology you're using is implemented correctly
-and that \emph{if} your assumptions are correct \emph{then} your estimator
-should be unbiased, you'll apply your methods to a synthetic dataset. 
+We use the observational dataset to obtain an estimate of the population statistics and use this to sample a random ethnicity (black, hispanic or white). We sample ``treat" with $p=0.25$ and increase $p$ by $0.25$ if ``nodegree" is 1 and (independently) by 0.25 for if the person has no degree.
 
-\subsection{Synthetic generation}
+We also assume that impact of education is limited to to ``nodegree" (encoded by ``at least 12 years of education" in the dataset) rather than the number of years spent in school. Because the people under consideration are already out of school, we assume for simplicity that this variable does not depend on age (i.e. people never go back to school), but only on ethnicity and sample with the corresponding conditional probabilities $P[nodegree \mid ethnicity]$. We then sample ({\tt age, re74, re75, re78}) from a multivariate normal distribution with means and covariances obtained from the observational data (seperate for each group based on combination of race, marriage, degree status). We exclude the datapoint if age is less than 16 and clip the revenue variables at $0$. We assume that marriage is dependent only on age and is described by a saturating exponential which we fit ``by hand" to the observational data.
 
-First, construct a synthetic dataset. This should be as close in format to
-your real-world dataset as possible. For example, if your real-world outcome is
-continuous, your synthetic outcome should be too. If your real-world dataset
-has many confounding variables, be sure to at least include two in your
-synthetic data.
+\begin{lstlisting}[language=Python, caption=Marriage using exponential saturation]
+def marriage_prob(x):
+    return 0.9 * (1 - np.exp(-0.25 * (x - 16)))
+\end{lstlisting}
 
-Describe your data-generating process. You can do so either in words or as a
-code snippet that shows how you sample the data. You can refer to the
-\texttt{observed} function in HW1 as a guide.
+We created the exponential data by modeling age on marriage as show in Figure \ref{fig:exp_marriage} using observational and experimental data.
 
-Generate a dataset with at least 1000 rows that you will use in the next part.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.4\textwidth]{img/exp_marr.jpeg}
+\caption{Probability of {\tt marriage} against {\tt age}}
+\label{fig:exp_marriage}
+\end{figure}
 
-\subsection{Synthetic estimation}
+If ``treat" is equal to one, we sample a treatment effect from a gaussian with mean 5000 and standard deviation 500 and add it to the re78 values of treated patients (Previously we tried to sample the ATE based on the experimental data, but because some combinations with one or two people in the experimental data had huge treatment effects, this skewed the estimate significantly and made it harder to see if the method was working correctly). In a way, we're exaggerating our ATE so it's easier to measure with our propensit-based strata method. This way, the confounders do influence treatment and the real income, but its increase upon treatment is very clear this way.
 
-For the dataset you generated, what is the true causal effect of the treatment
-on the outcome? In the HW1 example, that was 0.5. Explain how you know what it
-is in your setting.
+Although the real earnings in 1978 after the treatment are impacted by a number of confounders (and the likelihood of treatment depends on this as well), the average effect of setting ``treat" to one is homogeneous and equal to an increase in income of 5000USD. We use the previously explained approach of computing stratified propensities and apply it to the synthetic dataset. Figure \ref{fig:strata} shows the estimated effect as a function of the number of strata. The result is plausible and relatively close to the true value of 5000USD.
 
-Apply the estimator you used from \S\ref{sec:estimation} to estimate this
-causal effect. Do you get (approximately) the right answer? The answer to that
-question should be yes; try to debug your methodology or increase your
-synthetic data sample size if not.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{img/ate_strata.jpeg}
+\caption{Number of Strata vs Average Treatment Effect}
+\label{fig:strata}
+\end{figure}
 
 \section{Next steps for the project} \label{sec:next_steps}
 
-The work above covers the most fundamental aspect of a causal analysis. For
-your final project, you might consider trying a different estimator or choosing
-a different treatment or outcome to look at other interpretations of your data.
-
-In addition to any such new analyses, you need to consider {\bf at least
-one} new methodological considerations that we have or will
-cover in the second half of the course. These are listed in Appendix \ref{app:next_steps}.
-
-Pick (at least) one of these challenges and discuss how it would apply to your
-project thus far. You don't to have implemented anything by the time you turn
-in this assignment, but you should describe what you plan to do.
+\begin{itemize}[itemsep=-0.25em]
+\item{Heterogeneous treatment effects for each subgroup: This would help us understand how job training affects a certain race, education, age group or those with lower starting salaries.}
+\item{Sensitivity Analysis: We want to understand how including additional covariates that represent potential unmeasured confounders impacts the propensity score. This would help assess how sensitive the results are to the inclusion of these unmeasured variables. For example, we could measure mental state or criminal history and understand its impact.}
+\item{Selection Bias: We need to adjust and understand how selection bias may impact our dataset ``in the wild". Since the original study was a randomized control trial, a causal effect was readily available. However, for our observable dataset, we need to understand the impact of limiting our subset to the male only population and }
+\end{itemize}
 
 \section{Ask for feedback}
 
-List at least one part of your project thus far on which you'd specifically like
-feedback from me. For example: are you stuck on trying to use an existing
-package or aren't sure how to preprocess your data to apply one of the
-estimators you wrote? Do you have some initial results but aren't sure how to
-move forward on interpreting them?
+We are unsure whether our causal risk estimate for the counterfactual was calculated correctly and we require feedback. We will discuss this over our weekly call. We also would like to understannd how HTEs are calculated through our upcoming classes.
 
-\section*{References}
 
-Please cite any sources you referenced, including links to your datasets and
-any packages you used.
+\bibliographystyle{plain}
+\bibliography{references}
+
 
 \clearpage
-
-\appendix
-
-\section{Possible directions for next steps} \label{app:next_steps}
-
-Here are a few possible directions you might consider; you need to pick at
-least one and discuss in some detail how you hope to do so. {\bf You do not need
-to include the text for all these possible directions in your update writeup.}
-
-\paragraph{Unobserved confounding}
-
-Think about possible variables that could be important to your problem but
-are not in the dataset you're analyzing. Do such variables introduce confounding
-between your treatment and outcome? If so, return to Section
-\ref{sec:counterfactual} and propose a new function that would allow you to
-handle this confounding, and return to Section \ref{sec:estimation} to see
-how it changes your estimates of the causal effect.
-
-\paragraph{Causal discovery}
-
-What if the causal graph you drew in Section \ref{sec:graph} is wrong? Use
-a causal discovery algorithm to try to learn the causal graph from your
-dataset, and supplement the algorithm with any domain knowledge you're confident in.
-\href{https://rawgit.com/cmu-phil/tetrad/development/tetrad-gui/src/main/resources/resources/javahelp/manual/tetrad_tutorial.html}{The
-TETRAD library} is commonly used for causal discovery, but can be a bit
-difficult to use. I've
-\href{https://github.com/zachwooddoughty/causal-learn}{forked the {\tt
-causal-learn} library} here (a python port of TETRAD) to which I've added a
-``fast conditional independence test (FCIT)'' which can more easily handle a
-mix of discrete and continuous data.
-
-If you decide to focus on causal discovery, you might want to explore how well
-different methods (e.g. constraint-based versus score-based) work on your
-particular data. You can also discuss how does changing your causal graph
-change how you'd choose your function in Section \ref{sec:counterfactual} and
-your estimation in Section \ref{sec:estimation}.
-
-\paragraph{Measurement error}
-
-What if one or more variables you're using in your causal graph are actually
-just noisy proxies for the variables you wish you had? For example, if you're
-conditioning on BMI as a covariate, you might consider trying to formulate that
-as a mismeasured proxy for obesity. To apply these methods, you might need
-to consider whether you can find data to estimate the error rate $p(C^* \mid C)$,
-e.g., $p(\text{BMI} \mid \text{Obesity})$.
-
-If there's a machine learning classifier which predicts a variable that would
-be helpful for your analysis, you could treat its outputs as a noisy proxy
-and use its classification error rate as the $p(C^* \mid C)$.
-
-\paragraph{Double Machine Learning}
-
-What if the relationship between A and Y is confounded by a nonlinear
-relationship involving a high-dimensional confounder? Just training a linear
-regression $E[Y \mid A, C]$ won't work in general, but so-called double machine
-learning provides a way to get unbiased estimates of the causal effect. While
-implementing these methods is outside the scope of this class, you can use
-existing implementations from the
-\href{https://microsoft.github.io/dowhy/}{DoWhy} or similar packages.
-
-\paragraph{Missing data}
-
-We haven't covered this yet, but will do so soon. If you want additional
-information on this topic to decide whether it's something you're interested
-in, you can see the Files folder on Canvas which has slides from 2022.
-
-If you have missing values in your data, what additional assumptions do you
-have to make in order to identify the causal effect? If you only consider rows
-that have complete data, you're making an ``MCAR'' assumption that might not be
-very believable. Depending on the extent of the missingness, you can approach
-this by thinking hard about the underlying graphical model and figuring out an
-approach specific to your dataset. On the other hand, you can use
-\href{https://github.com/kshedden/mice_workshop}{a general approach like MICE}
-to impute the missing values from the observed data. If you decide to focus on
-missing data, you'll want to think about what additional assumptions your
-chosen method makes, and explore how your estimates in Section
-\ref{sec:estimation} change.
-
-\paragraph{Selection bias}
-
-We haven't covered this yet, but will do so soon. If you want additional
-information on this topic to decide whether it's something you're interested
-in, you can see the Files folder on Canvas which has slides from 2022.
-
-Selection bias affects all datasets in some way, but may affect certain analyses
-more than others. If you want to focus on selection bias, think about the
-data-generating process -- are there certain kinds of rows that are more likely
-to end up in your dataset than ``in the wild?'' If so, what does that selection
-`mechanism' depend on?
-
-We talked about two ways to approach selection bias: either try to find
-external data on $p(S=1 \mid X)$ to counteract $P(X \mid S=1)$, or target a
-causal effect such as the odds ratio that has built-in symmetry between the
-treatment and the outcome. Either way, you will have to tweak your function
-in Section \ref{sec:counterfactual} and your estimator in Section \ref{sec:estimation}.
 
 
 \end{document}
