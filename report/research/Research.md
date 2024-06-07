@@ -120,7 +120,6 @@ $D_i = 1 \text{ if } d_{is} > 0; \quad D_i = 0 \text{ if } d_{is} \leq 0$
 * Selection bias?:
   * Male
   * participants whose 1974 and 1975 earnings can be obtained and their 1978 earnings
-  * participants who stayed throughout the study
 * What is the "sensitivity of our propensity score results"?
 * Can we measure the treatment effect who were unemployed longer?
 * Can we also do a sensitivity analysis of our propensity scores?
