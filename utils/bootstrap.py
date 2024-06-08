@@ -3,6 +3,21 @@ from tqdm import tqdm
 
 
 def bootstrap(df, function, n=50, ci=95, set_seed=True, **kwargs):
+    """
+    Perform bootstrap resampling to estimate the confidence interval of a statistic.
+
+    Parameters:
+    - df (pd.DataFrame): The dataset to resample from.
+    - function (callable): The function to apply to each resampled dataset. It should take the DataFrame
+                           as its first argument and any additional keyword arguments.
+    - n (int): The number of bootstrap samples to draw. Default is 50.
+    - ci (int): The desired confidence interval percentage. Default is 95.
+    - set_seed (bool): Whether to set a random seed for reproducibility. Default is True.
+    - **kwargs: Additional keyword arguments to pass to the function.
+
+    Returns:
+    - numpy.ndarray: An array containing the mean, lower confidence interval, and upper confidence interval.
+    """
     if set_seed:
         np.random.seed(42)
     results = []
@@ -28,9 +43,24 @@ def bootstrap(df, function, n=50, ci=95, set_seed=True, **kwargs):
 
 
 def bootstrap_experiment(df, function, num_exp=10, n=50, ci=95, **kwargs):
+    """
+    Conduct multiple bootstrap experiments to estimate the variability of the bootstrap estimates.
+
+    Parameters:
+    - df (pd.DataFrame): The dataset to resample from.
+    - function (callable): The function to apply to each resampled dataset. It should take the DataFrame
+                           as its first argument and any additional keyword arguments.
+    - num_exp (int): The number of bootstrap experiments to run. Default is 10.
+    - n (int): The number of bootstrap samples to draw in each experiment. Default is 50.
+    - ci (int): The desired confidence interval percentage. Default is 95.
+    - **kwargs: Additional keyword arguments to pass to the function.
+
+    Returns:
+    - numpy.ndarray: An array containing the bootstrap results for each experiment.
+    """
     experiment_results = []
 
-    for i in tqdm(range(num_exp), desc=f"Running experiments"):
+    for _ in tqdm(range(num_exp), desc=f"Running experiments"):
         ci_result = bootstrap(df, function, n=n, ci=ci, set_seed=False, **kwargs)
         experiment_results.append(ci_result)
 

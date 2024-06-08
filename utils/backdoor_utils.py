@@ -5,8 +5,18 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 def backdoor_param_a(df, treatment_col, outcome_col, confounder_cols):
-    results = []
+    """
+    Estimate the causal effect of the treatment on the outcome using the backdoor adjustment method.
 
+    Parameters:
+    - df (pd.DataFrame): The dataset containing the treatment, outcome, and confounder columns.
+    - treatment_col (str): The name of the treatment column.
+    - outcome_col (str): The name of the outcome column.
+    - confounder_cols (list of str): A list of names of confounder columns.
+
+    Returns:
+    - param_a (float): The estimated causal effect of the treatment on the outcome.
+    """
     formula = f"{outcome_col} ~ {treatment_col} + " + " + ".join(confounder_cols)
     model = smf.ols(formula=formula, data=df).fit()
     param_a = model.params[treatment_col]
@@ -15,6 +25,17 @@ def backdoor_param_a(df, treatment_col, outcome_col, confounder_cols):
 
 
 def mean_diff_estimator(df, treatment_col, outcome_col):
+    """
+    Estimate the causal effect of the treatment on the outcome using the mean difference estimator.
+
+    Parameters:
+    - df (pd.DataFrame): The dataset containing the treatment and outcome columns.
+    - treatment_col (str): The name of the treatment column.
+    - outcome_col (str): The name of the outcome column.
+
+    Returns:
+    - effect (float): The estimated causal effect of the treatment on the outcome.
+    """
     treated = df[df[treatment_col] == 1]
     control = df[df[treatment_col] == 0]
     effect = treated[outcome_col].mean() - control[outcome_col].mean()
@@ -22,16 +43,26 @@ def mean_diff_estimator(df, treatment_col, outcome_col):
 
 
 def backdoor_lr(df, treatment_col, outcome_col, confounder_cols):
+    """
+    Estimate the causal effect of the treatment on the outcome using a linear regression model
+    for each treatment level and then averaging the predictions.
+
+    Parameters:
+    - df (pd.DataFrame): The dataset containing the treatment, outcome, and confounder columns.
+    - treatment_col (str): The name of the treatment column.
+    - outcome_col (str): The name of the outcome column.
+    - confounder_cols (list of str): A list of names of confounder columns.
+
+    Returns:
+    - effect (float): The estimated causal effect of the treatment on the outcome.
+    """
     results = []
     treatments = sorted(np.unique(df[treatment_col]))
 
-    # predicting E[Y^a] for each unique a
     for a_val in treatments:
         df_a = df.loc[df[treatment_col] == a_val, :].reset_index(drop=True)
         formula = f"{outcome_col} ~ " + " + ".join(confounder_cols)
         model = smf.ols(formula=formula, data=df_a).fit()
-
-        # predict using the entire dataset
         y_pred = model.predict(df)
         results.append(np.mean(y_pred))
 
@@ -41,6 +72,19 @@ def backdoor_lr(df, treatment_col, outcome_col, confounder_cols):
 def backdoor_classifier(
     df, treatment_col, outcome_col, confounder_cols, classifier_name="DecisionTree"
 ):
+    """
+    Estimate the causal effect of the treatment on the outcome using a specified classifier.
+
+    Parameters:
+    - df (pd.DataFrame): The dataset containing the treatment, outcome, and confounder columns.
+    - treatment_col (str): The name of the treatment column.
+    - outcome_col (str): The name of the outcome column.
+    - confounder_cols (list of str): A list of names of confounder columns.
+    - classifier_name (str): The name of the classifier to use ('DecisionTree' or 'LogisticRegression').
+
+    Returns:
+    - effect (float): The estimated causal effect of the treatment on the outcome.
+    """
     classifiers = {
         "DecisionTree": DecisionTreeClassifier,
         "LogisticRegression": LogisticRegression,
@@ -59,14 +103,11 @@ def backdoor_classifier(
     for a_val in treatments:
         df_a = df.loc[df[treatment_col] == a_val, :].reset_index(drop=True)
 
-        # Prepare the data
         X = df_a[confounder_cols]
         y = df_a[outcome_col]
 
-        # Fit the classifier model
         model = classifier.fit(X, y)
 
-        # Predict probabilities on the entire dataset
         X_full = df[confounder_cols]
         y_pred_prob = model.predict_proba(X_full)[:, 1]
         y_pred = (y_pred_prob >= 0.5).astype(int)
