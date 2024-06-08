@@ -1,4 +1,5 @@
 import numpy as np
+import statsmodels.formula.api as smf
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 

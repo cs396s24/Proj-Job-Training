@@ -1,10 +1,8 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
-def calculate_stratified_effects(
-    df, prop_col, treatment_col, outcome_col, num_strata
-):
+def calculate_stratified_effects(df, prop_col, treatment_col, outcome_col, num_strata):
     df["strata"] = pd.qcut(df[prop_col], num_strata, labels=False)
 
     strata_effects = []
