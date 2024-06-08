@@ -27,7 +27,7 @@ def ipw(df, treatment_col, outcome_col, confounder_cols):
     return results[1] - results[0]
 
 
-def ipw_probs(df, treatment_col, outcome_col, confounder_cols):
+def prop_probs(df, treatment_col, outcome_col, confounder_cols):
     df_copy = df.copy()
     results = []
     treatments = sorted(np.unique(df_copy[treatment_col]))
@@ -36,11 +36,15 @@ def ipw_probs(df, treatment_col, outcome_col, confounder_cols):
     formula = f"{treatment_col} ~ " + " + ".join(confounder_cols)
     model = smf.mnlogit(formula=formula, data=df_copy).fit(disp=False)
 
-    # Calculating IPW
     propensity_scores = model.predict(df_copy).reset_index(drop=True)
     df_copy["propensity"] = df_copy.apply(
         lambda row: propensity_scores.loc[row.name, int(row[treatment_col])], axis=1
     )
+    return df_copy[["id", "propensity"]]
+
+
+def ipw_probs(df, treatment_col, outcome_col, confounder_cols):
+    df_copy = prop_probs(df, treatment_col, outcome_col, confounder_cols)
     df_copy["ipw"] = 1 / df_copy["propensity"]
 
     return df_copy[["id", "ipw"]]
