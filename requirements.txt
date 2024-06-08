@@ -70,9 +70,6 @@ pexpect==4.9.0
 pillow==10.3.0
 pkginfo==1.8.3
 platformdirs==4.2.2
-poetry==1.8.3
-poetry-core==1.9.0
-poetry-plugin-export==1.8.0
 prometheus_client==0.20.0
 ptyprocess==0.7.0
 pycparser==2.21
