@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 def backdoor_param_a(df, treatment_col, outcome_col, confounder_cols):
     """
-    Estimate the causal effect of the treatment on the outcome using the backdoor adjustment method.
+    Estimate the causal effect of the treatment on the outcome using backdoor.
 
     Parameters:
     - df (pd.DataFrame): The dataset containing the treatment, outcome, and confounder columns.
@@ -26,7 +26,7 @@ def backdoor_param_a(df, treatment_col, outcome_col, confounder_cols):
 
 def mean_diff_estimator(df, treatment_col, outcome_col):
     """
-    Estimate the causal effect of the treatment on the outcome using the mean difference estimator.
+    Estimate the causal effect of the treatment on the outcome using the mean difference.
 
     Parameters:
     - df (pd.DataFrame): The dataset containing the treatment and outcome columns.
