@@ -1,0 +1,11 @@
+﻿Estimate,Method,Estimate,Lower CI,Upper CI
+$Re_{78}$,Experimentation,1796.24,522.92,3114.44
+$Re_{78} - Re_{75}$,Experimentation,1582.83,49.59,3126.33
+$Re_{78}$,Backdoor LR,-9200.54,-15795.52,-2132.38
+$Re_{78} - Re_{75}$,Backdoor LR,-9200.54,-15795.52,-2132.38
+$Re_{78}$,Treat parameter,861.24,-549.37,2379.72
+$Re_{78} - Re_{75}$,Treat parameter,861.24,-549.37,2379.72
+$Re_{78}$,IPW,-14694.36,-22000.2,1574.92
+$Re_{78} - Re_{75}$,IPW,2000.23,-16544.84,20828.44
+$Re_{78}$,Strata-Matching,-146.24,-1720.24,1469.72
+$Re_{78} - Re_{75}$,Strata-Matching,1122.41,-143.7,2300.95
